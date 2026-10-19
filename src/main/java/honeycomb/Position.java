@@ -1,4 +1,4 @@
-package main.java.honeycomb;
+package honeycomb;
 
 public class Position {
     private final int row;
@@ -15,5 +15,23 @@ public class Position {
 
     public int getColumn() {
         return column;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Position)) return false;
+        Position other = (Position) o;
+        return row == other.row && column== other.column;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(row, column);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + row + ", " + column+ ")";
     }
 }

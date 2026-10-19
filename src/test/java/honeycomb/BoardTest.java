@@ -1,4 +1,4 @@
-package test.java.honeycomb;
+package honeycomb;
 
 public class BoardTest {
 }

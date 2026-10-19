@@ -1,5 +1,5 @@
 package honeycomb;
-import main.java.honeycomb.TileType;
+import honeycomb.TileType;
 
 public class Tile {
     private final TileType type;

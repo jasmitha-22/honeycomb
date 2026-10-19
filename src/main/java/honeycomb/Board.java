@@ -1,4 +1,4 @@
-package main.java.honeycomb;
+package honeycomb;
 
 public class Board {
     private Tile[][] tiles;

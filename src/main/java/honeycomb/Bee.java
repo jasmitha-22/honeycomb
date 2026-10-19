@@ -1,7 +1,7 @@
 package honeycomb;
-import main.java.honeycomb.Position;
-import main.java.honeycomb.Board;
-import main.java.honeycomb.Tile;
+import honeycomb.Position;
+import honeycomb.Board;
+import honeycomb.Tile;
 
 
 public class Bee {
