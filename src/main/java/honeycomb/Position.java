@@ -17,6 +17,10 @@ public class Position {
         return column;
     }
 
+    public static Position at(int row, int column) {
+        return new Position(row, column);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
