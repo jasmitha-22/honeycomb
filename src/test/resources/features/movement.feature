@@ -1,4 +1,3 @@
-@wip
 Feature: Exploring the garden maze
 
   As a player
