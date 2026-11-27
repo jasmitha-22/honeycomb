@@ -1,11 +1,13 @@
 package honeycomb;
 
 import honeycomb.characters.CharacterFactory;
+import honeycomb.observer.GameObserver;
 import honeycomb.strategy.FrightenedStrategy;
 import honeycomb.strategy.HornetStrategy;
 import honeycomb.strategy.StrategyFactory;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -59,7 +61,7 @@ public class GameTest {
 
         game.playTurn(Direction.LEFT);
 
-        assertEquals(new Position(0, 3), game.getEnemies().get(0).getPosition());
+        assertEquals(new Position(0, 3), game.getEnemies().getFirst().getPosition());
         assertTrue(board.getTile(0, 3).hasPollen());
     }
 
@@ -81,5 +83,47 @@ public class GameTest {
         Board board = Board.getNewBuilder().createGrid(2, 2).createWall(0, 0).build();
         assertThrows(IllegalArgumentException.class,
                 () -> new Game(board, characterFactory.createBee(new Position(0, 0)), List.of(), strategyFactory));
+    }
+
+    @Test
+    public void observerSeesTheWinExactlyOnce() {
+        Board board = Board.getNewBuilder()
+                .createGrid(1, 2)
+                .addPollen(0, 1)
+                .build();
+        GameCharacter bee = characterFactory.createBee(Position.at(0, 0));
+        Game game = new Game(board, bee, List.of(), strategyFactory);
+
+        // Record the status the observer receives after each completed turn.
+        List<GameStatus> observedStatuses = new ArrayList<>();
+        game.addObserver(updatedGame -> observedStatuses.add(updatedGame.getStatus()));
+
+        game.playTurn(Direction.RIGHT); // Collects the last pollen.
+        game.playTurn(Direction.LEFT);  // The game has already ended.
+
+        assertEquals(List.of(GameStatus.WON), observedStatuses);
+    }
+
+    @Test
+    public void removedObserverStopsReceivingTurnUpdates() {
+        Board board = Board.getNewBuilder()
+                .createGrid(1, 3)
+                .addPollen(0, 2)
+                .build();
+        GameCharacter bee = characterFactory.createBee(Position.at(0, 0));
+        Game game = new Game(board, bee, List.of(), strategyFactory);
+
+        List<GameStatus> updates = new ArrayList<>();
+        GameObserver observer = updatedGame -> updates.add(updatedGame.getStatus());
+
+        game.addObserver(observer);
+        game.playTurn(Direction.RIGHT);
+
+        game.removeObserver(observer);
+        game.playTurn(Direction.RIGHT);
+
+        //checks current status updated, but observer has previous status because it was removed.
+        assertEquals(GameStatus.WON, game.getStatus());
+        assertEquals(List.of(GameStatus.RUNNING), updates);
     }
 }

@@ -1,8 +1,7 @@
 package honeycomb;
 
-import java.lang.module.ModuleDescriptor;
 
-public class Board {
+public class Board{
     private final Tile[][] tiles;
 
     public Board(Tile[][] tiles) {
@@ -29,6 +28,14 @@ public class Board {
         }
 
         return tiles[row][col];
+    }
+
+    public int getRowCount() {
+        return tiles.length;
+    }
+
+    public int getColumnCount(int row) {
+        return tiles[row].length;
     }
 
     public boolean canMoveTo(Position position) {

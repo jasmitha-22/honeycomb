@@ -26,3 +26,8 @@ Feature: Exploring the garden maze
     When the bee moves onto that tile
     Then the bee collects the pollen
     And the pollen is no longer available at that location
+
+  Scenario: Trying to move past he right edge leaves the bee in place
+    Given the bee is at the right edge of the board
+    When the player moves right
+    Then the bee remains at position (2, 4)
