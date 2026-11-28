@@ -1,7 +1,9 @@
 package honeycomb;
 
+import honeycomb.observer.GameObserver;
 import honeycomb.strategy.StrategyFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -11,6 +13,7 @@ public class Game {
     private final int totalStartingPollen;
     private final StrategyFactory strategyFactory;
     private GameStatus status = GameStatus.RUNNING;
+    private final List<GameObserver> observers = new ArrayList<>();
 
     public Game(Board board, GameCharacter bee, List<GameCharacter> enemies, StrategyFactory strategyFactory) {
         if(!board.canMoveTo(bee.getPosition())){
@@ -38,12 +41,18 @@ public class Game {
         moveBee(beeMove);
         winOrLoss();
 
-        if (isGameOver()) {
-            return;
+        if (!isGameOver()) {
+            moveEnemies();
+            winOrLoss();
         }
 
-        moveEnemies();
-        winOrLoss();
+        notifyObservers();
+    }
+
+    private void notifyObservers() {
+        for (GameObserver observer : List.copyOf(observers)) {
+            observer.onTurnFinished(this);
+        }
     }
 
     private void moveBee(Direction beeMove) {
@@ -103,6 +112,10 @@ public class Game {
 
     public List<GameCharacter> getEnemies(){return enemies;}
 
-    public int getTotalStartingPollen() { return totalStartingPollen; }
-
+    public void addObserver(GameObserver observer) {
+        observers.add(observer);
+    }
+    public void removeObserver(GameObserver observer) {
+        observers.remove(observer);
+    }
 }

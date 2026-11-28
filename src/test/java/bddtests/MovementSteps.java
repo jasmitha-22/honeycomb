@@ -36,6 +36,9 @@ public class MovementSteps {
 
     @Given("the tile to the right is an open path")
     public void theTileToTheRightIsAnOpenPath() {
+        //we start the builder with open tiles so the setup matches the scenario
+        Position right = Direction.RIGHT.getNextPosition(bee.getPosition());
+        assertTrue(boardBuilder.build().canMoveTo(right));
     }
 
     @Given("the tile to the right is a wall")

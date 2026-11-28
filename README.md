@@ -20,7 +20,9 @@ For our initial version, we want to focus on the core experience:
 - Working toward the goal of making it back to the hive with what you've gathered.
 
 We are still figuring out exactly how resources, abilities, and interactions will work together. We want to start with a manageable version of the game and build on it as we go.
+## Test Coverage Screenshot
 
+![honeycomb test coverage image](images/honeycomb_test_coverage.png)
 ## Ideas for the future
 
 As the game develops, we'd like to explore more ways to make the garden feel alive. This could include trading resources with other characters, meeting friends who can help you along the way, solving riddles, discovering hidden paths, and learning new abilities from magical flowers.
@@ -43,17 +45,15 @@ We're also using the project to get more experience designing an object-oriented
 
 ## Where we are now
 
-More details about how to build and run the game will be added as development progresses.
-Our first playable core focuses on movement, collecting, and creatures. The bee moves through a maze of paths and walls, collecting **pollen** as she goes. Two kinds of creatures share the garden: **hornets**, which hunt the bee, and **wasps**, which wander randomly. Collecting all the pollen wins the level, and getting caught by a creature ends it. Creatures can also be switched into a frightened mode where they run from the bee, which will power our royal jelly ability.
-
-The game logic and tests are in place. The Swing interface is next.
+The game logic, tests, and Swing interface are in place. You can play through a garden, restart the same round, or generate a new garden. We currently have a 74% method coverage requirement which meets the assignment's requirements. 
 
 ## Running the project
 
-You'll need JDK 17 or newer. Maven is bundled with IntelliJ, so there's nothing extra to install.
+You'll need JDK 25. Maven is bundled with IntelliJ, so there's nothing extra to install.
 
 - **In IntelliJ:** open the Maven tool window and run **Lifecycle → test**.
 - **From a terminal (if Maven is installed):** `mvn clean test`
+- **To play in IntelliJ:** open `src/main/java/honeycomb/ui/HoneycombApp.java` and click the green run button next to `main()`. Use the arrow keys or the buttons to move the bee.
 
 This runs all the JUnit tests and Cucumber scenarios. The Cucumber HTML report is written to `bdd/report.html`.
 
@@ -106,10 +106,25 @@ Strategies can be swapped while the game is running. `Game.frightenEnemies()` gi
 
 **Why:** The rest of the code just asks for "a hornet" without needing to know how one is put together. The factories are the only place that knows a hornet chases and a wasp wanders, so changing a character's behavior means changing one line.
 
+### 4. Command: `MoveCommand`
+
+**Where:** Moving the bee with the buttons and arrow keys.
+
+**How:** `HoneycombPanel` creates one `MoveCommand` for each direction. Each command holds the game and the direction to move. Clicking the RIGHT button and pressing the right arrow both run the same command, which calls `game.playTurn(Direction.RIGHT)`.
+
+**Why:** We can handle both ways of moving the bee in one place. When the game ends, disabling a command turns off both the button and the arrow key for that direction.
+
+### 5. Observer: `GameObserver`
+
+**Where:** Updating the Swing panel after a turn.
+
+**How:** `HoneycombPanel` implements `GameObserver`. When a round starts, `HoneycombApp` registers the panel with `game.addObserver(panel)`. After the turn finishes, `Game` calls `onTurnFinished()` on its observers. The panel then reads the updated game state and redraws the garden.
+
+**Why:** The game handles movement, pollen, and collisions, and the panel handles how they look on screen. This also lets us test the winning update by registering an observer that records the game status.
+
 ### How the patterns work together
 
-The **Builder** creates the maze. The **Character Factory** creates the characters and, through the `StrategyFactory`, gives each one the right **Strategy**. `Game` receives the finished board and characters and runs the turns.
-
+The **Builder** creates the maze. The **Character Factory** creates the characters and, through the `StrategyFactory`, gives each one the right **Strategy**. `Game` receives the finished board and characters. When the player clicks a direction button or presses the matching arrow key, the same **MoveCommand** calls `Game.playTurn()` for that direction. Once the turn is finished, `Game` notifies the Swing panel through the **Observer** pattern so it can show the updated positions, pollen, and game status.
 ## OO principles
 
 ### Coding to abstractions
