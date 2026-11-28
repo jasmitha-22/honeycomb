@@ -20,7 +20,9 @@ For our initial version, we want to focus on the core experience:
 - Working toward the goal of making it back to the hive with what you've gathered.
 
 We are still figuring out exactly how resources, abilities, and interactions will work together. We want to start with a manageable version of the game and build on it as we go.
+## Test Coverage Screenshot
 
+![honeycomb test coverage image](images/honeycomb_test_coverage.png)
 ## Ideas for the future
 
 As the game develops, we'd like to explore more ways to make the garden feel alive. This could include trading resources with other characters, meeting friends who can help you along the way, solving riddles, discovering hidden paths, and learning new abilities from magical flowers.
